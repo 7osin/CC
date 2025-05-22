@@ -15,7 +15,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const storage = getStorage(app);
+const storageRef = ref(storage, 'videos/' + file.name);
+
 
 document.getElementById("status").textContent = "";
 
