@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB6KsEukf_ZCLihRGNIdHjxJsQa5zTIdj4",
@@ -16,27 +17,43 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
+const storage = getStorage(app);
 
-// تحقق من تسجيل الدخول
 onAuthStateChanged(auth, (user) => {
   if (!user) {
     window.location.href = "login.html";
   }
 });
 
-// حفظ البيانات عند الضغط على زر الحفظ
 document.getElementById("save-btn").addEventListener("click", async () => {
   const blogText = document.getElementById("blog-input").value;
-  const videoLink = document.getElementById("video-link").value;
+  const videoLinkInput = document.getElementById("video-link").value;
+  const videoFileInput = document.getElementById("video-file").files[0];
 
+  let videoUrl = videoLinkInput; // الرابط الافتراضي من اليوتيوب
+
+  if (videoFileInput) {
+    // إذا رفع ملف فيديو، نرفعه على Firebase Storage
+    const storageRef = sRef(storage, `videos/${videoFileInput.name}`);
+    try {
+      await uploadBytes(storageRef, videoFileInput);
+      videoUrl = await getDownloadURL(storageRef);
+    } catch (error) {
+      console.error("خطأ في رفع الفيديو:", error);
+      document.getElementById("status").textContent = "فشل رفع الفيديو.";
+      return;
+    }
+  }
+
+  // حفظ النص والرابط (سواء يوتيوب أو رابط الفيديو المرفوع)
   try {
     await set(ref(db), {
       blog: blogText,
-      video: videoLink,
+      video: videoUrl,
     });
     document.getElementById("status").textContent = "تم الحفظ بنجاح!";
   } catch (error) {
+    console.error("خطأ في حفظ البيانات:", error);
     document.getElementById("status").textContent = "حدث خطأ أثناء الحفظ.";
-    console.error(error);
   }
 });

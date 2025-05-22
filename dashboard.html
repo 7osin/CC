@@ -10,8 +10,12 @@
     <h1>لوحة التحكم</h1>
     <label>نص المدونة:</label><br />
     <textarea id="blog-input" rows="6" cols="50"></textarea><br />
-    <label>رابط فيديو يوتيوب (embed):</label><br />
-    <input type="text" id="video-link" /><br /><br />
+<label>رابط فيديو يوتيوب (embed):</label><br>
+<input type="text" id="video-link" placeholder="https://www.youtube.com/embed/xxxx"><br><br>
+
+<label>أو رفع فيديو من جهازك:</label><br>
+<input type="file" id="video-file" accept="video/*"><br><br>
+
     <button id="save-btn">حفظ</button>
     <p id="status"></p>
   </div>
