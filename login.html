@@ -8,21 +8,38 @@
 <body>
   <div class="container">
     <h1>تسجيل دخول</h1>
-    <input type="password" id="password" placeholder="كلمة المرور">
+    <input type="email" id="email" placeholder="البريد الإلكتروني"><br>
+    <input type="password" id="password" placeholder="كلمة المرور"><br>
     <button onclick="login()">دخول</button>
     <p id="error" style="color:red;"></p>
   </div>
 
-  <script>
-    function login() {
-      const pass = document.getElementById('password').value;
-      if (pass === 'admin123') {
-        localStorage.setItem('loggedIn', 'true');
-        window.location.href = 'dashboard.html';
-      } else {
-        document.getElementById('error').textContent = 'كلمة المرور غير صحيحة';
-      }
-    }
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB6KsEukf_ZCLihRGNIdHjxJsQa5zTIdj4",
+      authDomain: "my-blog-project-78b84.firebaseapp.com",
+      projectId: "my-blog-project-78b84",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.login = function () {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          localStorage.setItem('loggedIn', 'true');
+          window.location.href = 'dashboard.html';
+        })
+        .catch((error) => {
+          document.getElementById('error').textContent = 'البريد أو كلمة المرور غير صحيحة';
+        });
+    };
   </script>
 </body>
 </html>
