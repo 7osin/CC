@@ -1,5 +1,5 @@
 async function fetchData() {
-  const res = await fetch('https://your-vercel-endpoint.vercel.app/api/data');
+  const res = await fetch('https://cc-five-flame.vercel.app/api/data');
   const data = await res.json();
 
   document.getElementById('blog-text').textContent = data.blog;

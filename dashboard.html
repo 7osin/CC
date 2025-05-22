@@ -25,7 +25,7 @@
       const blogText = document.getElementById('blog-input').value;
       const videoLink = document.getElementById('video-link').value;
 
-      const res = await fetch('https://your-vercel-endpoint.vercel.app/api/update', {
+      const res = await fetch('https://cc-five-flame.vercel.app/api/update', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ blog: blogText, video: videoLink })
