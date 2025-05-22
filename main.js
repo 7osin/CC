@@ -17,7 +17,8 @@ const db = getDatabase(app);
 
 // جلب البيانات
 const blogEl = document.getElementById("blog-text");
-const videoEl = document.getElementById("video-frame");
+const videoEl = document.getElementById("youtube-video"); // بدلاً من "video-frame"
+
 
 get(ref(db)).then(snapshot => {
   const data = snapshot.val();
