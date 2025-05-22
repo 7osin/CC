@@ -3,20 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <title>مدونتي</title>
-  <style>
-    body { font-family: Arial, sans-serif; direction: rtl; }
-    .container { max-width: 600px; margin: auto; padding: 20px; }
-    iframe, video { max-width: 100%; height: auto; }
-  </style>
 </head>
 <body>
   <div class="container">
     <h1>المدونة</h1>
     <p id="blog-text">تحميل...</p>
 
-    <div id="video-container">
-      <!-- إما iframe لليوتيوب أو فيديو من التخزين -->
-    </div>
+    <div id="video-container"></div>
 
     <a href="login.html">تسجيل الدخول</a>
   </div>
@@ -37,32 +30,29 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    const database = getDatabase(app);
 
     const blogTextEl = document.getElementById("blog-text");
     const videoContainer = document.getElementById("video-container");
 
-    get(ref(db)).then(snapshot => {
-      if (!snapshot.exists()) {
-        blogTextEl.textContent = "لا يوجد محتوى.";
-        return;
-      }
-
+    get(ref(database, "/")).then(snapshot => {
       const data = snapshot.val();
-      blogTextEl.textContent = data.blog || "لا يوجد نص مدونة";
 
-      // نظيف الفيديو بناءً على نوع الرابط:
-      if (!data.video) {
-        videoContainer.innerHTML = "<p>لا يوجد فيديو للعرض.</p>";
-        return;
-      }
+      blogTextEl.textContent = data.blog || "";
 
-      if (data.video.includes("youtube.com/embed")) {
-        // رابط يوتيوب iframe
-        videoContainer.innerHTML = `<iframe width="560" height="315" src="${data.video}" frameborder="0" allowfullscreen></iframe>`;
+      if (data.video) {
+        if (data.video.includes("youtube.com") || data.video.includes("youtu.be")) {
+          // عرض فيديو يوتيوب ضمن iframe
+          videoContainer.innerHTML = `<iframe width="560" height="315" src="${data.video}" frameborder="0" allowfullscreen></iframe>`;
+        } else {
+          // عرض فيديو مرفوع من Firebase Storage كـ فيديو HTML5
+          videoContainer.innerHTML = `<video width="560" height="315" controls>
+            <source src="${data.video}" type="video/mp4" />
+            متصفحك لا يدعم عرض الفيديو.
+          </video>`;
+        }
       } else {
-        // رابط فيديو من التخزين (رابط مباشر لملف فيديو)
-        videoContainer.innerHTML = `<video controls><source src="${data.video}" type="video/mp4">متصفحك لا يدعم عرض الفيديو.</video>`;
+        videoContainer.innerHTML = "<p>لا يوجد فيديو.</p>";
       }
     });
   </script>
