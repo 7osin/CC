@@ -4,36 +4,17 @@
   <meta charset="UTF-8">
   <title>لوحة التحكم</title>
   <link rel="stylesheet" href="style.css">
+  <script type="module" src="admin.js"></script>
 </head>
 <body>
   <div class="container">
     <h1>لوحة التحكم</h1>
     <label>نص المدونة:</label><br>
     <textarea id="blog-input" rows="6" cols="50"></textarea><br>
-    <label>رابط فيديو يوتيوب:</label><br>
+    <label>رابط فيديو يوتيوب (embed):</label><br>
     <input type="text" id="video-link"><br><br>
-    <button onclick="saveData()">حفظ</button>
+    <button id="save-btn">حفظ</button>
     <p id="status"></p>
   </div>
-
-  <script>
-    if (localStorage.getItem('loggedIn') !== 'true') {
-      window.location.href = 'login.html';
-    }
-
-    async function saveData() {
-      const blogText = document.getElementById('blog-input').value;
-      const videoLink = document.getElementById('video-link').value;
-
-      const res = await fetch('https://cc-five-flame.vercel.app/api/update', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ blog: blogText, video: videoLink })
-      });
-
-      const data = await res.json();
-      document.getElementById('status').textContent = data.message || 'تم الحفظ';
-    }
-  </script>
 </body>
 </html>
