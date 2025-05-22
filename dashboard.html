@@ -1,86 +1,26 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>لوحة التحكم</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <h1>لوحة التحكم</h1>
+    <label>نص المدونة:</label><br>
+    <textarea id="blog-input" rows="6" cols="50"></textarea><br><br>
 
-    <label>نص المدونة:</label><br />
-    <textarea id="blog-input" rows="6" cols="50"></textarea><br />
+    <label>رابط فيديو يوتيوب (اختياري):</label><br>
+    <input type="text" id="video-link"><br><br>
 
-    <label>رفع ملف فيديو من جهازك:</label><br />
-    <input type="file" id="video-file" accept="video/*" /><br /><br />
+    <label>أو اختر فيديو من جهازك:</label><br>
+    <input type="file" id="video-file"><br><br>
 
-    <label>أو رابط فيديو يوتيوب (embed):</label><br />
-    <input type="text" id="video-link" /><br /><br />
-
-    <button id="save-btn">حفظ</button>
+    <button onclick="saveData()">حفظ</button>
     <p id="status"></p>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-    import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-    // إعدادات Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyB6KsEukf_ZCLihRGNIdHjxJsQa5zTIdj4",
-      authDomain: "my-blog-project-78b84.firebaseapp.com",
-      databaseURL: "https://my-blog-project-78b84-default-rtdb.firebaseio.com",
-      projectId: "my-blog-project-78b84",
-      storageBucket: "my-blog-project-78b84.appspot.com",  // تأكد من هذا الجزء
-      messagingSenderId: "531624482514",
-      appId: "1:531624482514:web:17e25835a98587eb07ff0b",
-      measurementId: "G-E57HREWSL0"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-    const storage = getStorage(app);
-
-    const saveBtn = document.getElementById("save-btn");
-    const statusEl = document.getElementById("status");
-
-    saveBtn.onclick = async () => {
-      statusEl.textContent = "جاري الحفظ...";
-
-      const blogText = document.getElementById("blog-input").value;
-      const videoLinkInput = document.getElementById("video-link").value;
-      const videoFileInput = document.getElementById("video-file").files[0];
-
-      try {
-        let videoURL = "";
-
-        if (videoFileInput) {
-          // رفع الفيديو إلى Firebase Storage
-          const storageReference = sRef(storage, `videos/${videoFileInput.name}`);
-          await uploadBytes(storageReference, videoFileInput);
-
-          // جلب رابط التنزيل للفيديو المرفوع
-          videoURL = await getDownloadURL(storageReference);
-        } else if (videoLinkInput.trim() !== "") {
-          // إذا المستخدم أدخل رابط فيديو (يوتيوب مثلا)
-          videoURL = videoLinkInput.trim();
-        } else {
-          videoURL = ""; // لا فيديو مرفوع أو رابط معطى
-        }
-
-        // تحديث قاعدة البيانات مع نص المدونة ورابط الفيديو
-        await set(ref(database, "/"), {
-          blog: blogText,
-          video: videoURL,
-        });
-
-        statusEl.textContent = "تم الحفظ بنجاح!";
-      } catch (error) {
-        statusEl.textContent = "حدث خطأ أثناء الحفظ: " + error.message;
-      }
-    };
-  </script>
+  <script type="module" src="admin.js"></script>
 </body>
 </html>
